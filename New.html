@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator - AUST Theme</title>
+    <style>
+        /* Background styling for mobile and desktop */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            /* Replace 'Theme.jpg' with your actual image path or URL */
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('Theme.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            backdrop-filter: blur(5px); /* Adds a modern blur effect */
+        }
+
+        h2, h3 { color: #222; margin-top: 0; }
+        p { color: #444; font-size: 0.9rem; }
+
+        input {
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box; /* Ensures padding doesn't break width */
+            font-size: 1rem;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #d4af37; /* Gold color to match your theme */
+            color: #000;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        button:hover { background: #b8962e; }
+
+        .course-row {
+            background: rgba(0, 0, 0, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #d4af37;
+        }
+
+        .input-group { display: flex; gap: 8px; }
+        
+        .hidden { display: none; }
+
+        #result-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d4af37;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 480px) {
+            .container { padding: 15px; }
+            h2 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="step1">
+        <h2>CGPA Calculator</h2>
+        <p>Enter the total number of courses</p>
+        <input type="number" id="courseCount" placeholder="e.g. 5" min="1">
+        <button onclick="generateFields()">Next</button>
+    </div>
+
+    <div id="step2" class="hidden">
+        <h3>Course Details</h3>
+        <div id="courseFields"></div>
+        <button onclick="calculateCGPA()">Calculate CGPA</button>
+    </div>
+
+    <div id="step3" class="hidden">
+        <h3>Your Result</h3>
+        <div id="result-value"></div>
+        <button onclick="resetAll()">Try Again</button>
+    </div>
+</div>
+
+<script>
+    function generateFields() {
+        const count = document.getElementById('courseCount').value;
+        if (count < 1) { alert("Please enter a valid number."); return; }
+
+        const container = document.getElementById('courseFields');
+        container.innerHTML = ""; 
+
+        for (let i = 1; i <= count; i++) {
+            container.innerHTML += `
+                <div class="course-row">
+                    <p><strong>Course #${i}</strong></p>
+                    <div class="input-group">
+                        <input type="number" class="credit" placeholder="Credit" step="0.5">
+                        <input type="number" class="grade" placeholder="GPA" step="0.01">
+                    </div>
+                </div>
+            `;
+        }
+        document.getElementById('step1').classList.add('hidden');
+        document.getElementById('step2').classList.remove('hidden');
+    }
+
+    function calculateCGPA() {
+        const credits = document.getElementsByClassName('credit');
+        const grades = document.getElementsByClassName('grade');
+        let totalPoints = 0, totalCredits = 0;
+
+        for (let i = 0; i < credits.length; i++) {
+            const c = parseFloat(credits[i].value);
+            const g = parseFloat(grades[i].value);
+            if (!isNaN(c) && !isNaN(g)) {
+                totalPoints += (c * g);
+                totalCredits += c;
+            }
+        }
+
+        if (totalCredits === 0) { alert("Input valid data."); return; }
+
+        document.getElementById('result-value').innerText = (totalPoints / totalCredits).toFixed(2);
+        document.getElementById('step2').classList.add('hidden');
+        document.getElementById('step3').classList.remove('hidden');
+    }
+
+    function resetAll() {
+        document.getElementById('courseCount').value = "";
+        document.getElementById('step3').classList.add('hidden');
+        document.getElementById('step1').classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>
